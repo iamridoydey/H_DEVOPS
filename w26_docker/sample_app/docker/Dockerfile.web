@@ -1,0 +1,35 @@
+# Use Bun as the base image
+FROM oven/bun:latest
+
+# Set working directory
+WORKDIR /app
+
+# Install necessary dependencies in a single layer to reduce image size
+RUN apt-get update && apt-get install -y --no-install-recommends openssl
+
+# Copy root package.json and lock file
+# Copy only essential files first to leverage caching
+COPY package*.json turbo.json bun.lock ./
+
+# Install dependencies
+RUN bun install
+
+
+# Copy monorepo packages efficiently
+COPY ./packages ./packages
+COPY ./apps/web ./apps/web
+
+RUN bun add prisma @prisma/client
+
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
+RUN bun run db:generate
+
+RUN bun run build
+
+# Expose the port for web service
+EXPOSE 3000
+
+# Start the web application with migration handling
+CMD ["sh", "-c", "bun run db:migrate && bun run db:generate && bun run start:web"]

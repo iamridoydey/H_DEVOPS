@@ -1,13 +1,5 @@
 {
   "name": "sample_app",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
-  },
   "devDependencies": {
     "prettier": "^3.5.3",
     "turbo": "^2.5.2",
@@ -17,6 +9,19 @@
     "node": ">=18"
   },
   "packageManager": "bun@1.2.11",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "db:migrate": "cd packages/db && bunx prisma migrate deploy && cd ../..",
+    "db:generate": "cd packages/db && bunx prisma generate && cd ../..",
+    "start:backend": "cd apps/backend && bun run start",
+    "start:ws": "cd apps/ws && bun run start",
+    "start:web": "cd apps/web && bun run start"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
